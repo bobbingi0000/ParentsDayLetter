@@ -1,0 +1,75 @@
+/* ===================================
+   어버이날 편지 서비스 - 글로벌 스타일
+   =================================== */
+
+/* Google Fonts - Noto Serif KR (한글 명조) + Noto Sans KR (한글 고딕) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap');
+
+@import "tailwindcss";
+
+/* Custom Theme Tokens */
+@theme {
+  --color-primary: #D4546A;
+  --color-primary-dark: #B8344E;
+  --color-primary-light: #F2A5B3;
+  --color-secondary: #8B5E3C;
+  --color-accent: #E8B86D;
+  --color-bg-warm: #FFF8F0;
+  --color-bg-card: #FFFFFF;
+  --color-text-main: #3D2B1F;
+  --color-text-sub: #7A6A5E;
+  --color-text-light: #B0A090;
+  --color-border-soft: #F0E0D0;
+  --color-success: #5BA87C;
+  --color-error: #D94F4F;
+
+  --font-sans: 'Noto Sans KR', sans-serif;
+  --font-serif: 'Noto Serif KR', serif;
+}
+
+/* Base Reset & Defaults */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-main);
+  background-color: var(--color-bg-warm);
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-light);
+  border-radius: 3px;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-primary-light);
+  color: var(--color-text-main);
+}
