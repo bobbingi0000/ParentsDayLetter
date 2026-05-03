@@ -1,260 +1,300 @@
 /**
- * WritePage.jsx - 편지 작성 페이지 (SRP: 순수 UI 렌더링만 담당)
+ * =====================================================================
+ * WritePage.jsx — 편지 작성 페이지
+ * =====================================================================
  *
- * 폼 로직은 useLetterForm 훅에, 검증은 validators에, 정화는 sanitize에 위임.
- * 이 컴포넌트는 오직 사용자 인터페이스 렌더링에만 집중합니다.
+ * 📌 이 파일의 역할
+ *   사용자가 편지를 작성하는 메인 입력 폼 페이지입니다.
+ *   이 파일은 "어떻게 보여줄지(UI)"만 담당합니다.
+ *
+ * 📌 로직은 어디에?
+ *   - 폼 상태관리 / 제출 로직 → src/hooks/useLetterForm.js
+ *   - 유효성 검사 규칙        → src/utils/validators.js
+ *   - XSS 방지 입력 정화     → src/utils/sanitize.js
+ *   - Firestore 저장         → src/services/letterService.js
+ *
+ * 📌 디자인 수정 가이드
+ *   - 전체 배경색    → className="... bg-bg-warm ..."  (index.css @theme에서 변경)
+ *   - 카드 모양      → className="... rounded-3xl ..."  (rounded-2xl로 줄이면 덜 둥글어짐)
+ *   - 카드 그림자    → className="... shadow-xl ..."    (shadow-lg: 작게, shadow-2xl: 크게)
+ *   - 버튼 색상      → from-primary to-primary-dark     (@theme에서 primary 색 변경)
+ *   - 이미지 크기    → className="w-28 h-28 ..."        (w-36 h-36으로 키울 수 있음)
+ *   - 카드 최대 너비 → className="... max-w-md ..."     (max-w-lg로 넓히기 가능)
+ * =====================================================================
  */
 
 import { motion } from 'framer-motion';
 import { useLetterForm } from '../hooks/useLetterForm';
 import { MAX_LENGTHS } from '../utils/validators';
 
-/** Framer Motion 애니메이션 variants */
+/* ─────────────────────────────────────────────────────
+   애니메이션 설정 (Framer Motion)
+   ─────────────────────────────────────────────────────
+   ✏️ 애니메이션을 없애고 싶다면: initial/animate 속성을 삭제하세요.
+   ✏️ 더 빠르게: duration 값을 줄이세요 (0.6 → 0.3)
+   ✏️ 더 느리게: duration 값을 늘리세요 (0.6 → 1.0)
+   ───────────────────────────────────────────────────── */
+
+/** 페이지 전체가 아래에서 위로 올라오는 애니메이션 */
 const pageVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 30 }, // 시작: 투명 + 30px 아래
   visible: {
     opacity: 1,
-    y: 0,
+    y: 0,                        // 끝: 불투명 + 원래 위치
     transition: { duration: 0.6, ease: 'easeOut' },
   },
 };
 
+/**
+ * 폼 각 항목이 순서대로 나타나는 애니메이션
+ * custom={숫자} 로 딜레이를 조절합니다.
+ * custom={0} → 즉시, custom={2} → 0.3초 후, custom={4} → 0.6초 후
+ */
 const itemVariants = {
   hidden: { opacity: 0, y: 16 },
   visible: (i) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: 0.15 * i, duration: 0.45, ease: 'easeOut' },
+    transition: {
+      delay: 0.15 * i, // ✏️ 항목 간 간격: 0.15 → 더 빠르게 0.08, 더 느리게 0.25
+      duration: 0.45,
+      ease: 'easeOut',
+    },
   }),
 };
 
+/* ─────────────────────────────────────────────────────
+   메인 컴포넌트
+   ───────────────────────────────────────────────────── */
 function WritePage() {
+  // 폼 상태 및 이벤트 핸들러를 훅에서 가져옵니다.
   const {
-    formData,
-    errors,
-    isSubmitting,
-    submitError,
-    handleChange,
-    handleBlur,
-    handleSubmit,
+    formData,      // 현재 입력값 { sender, receiver, content, password }
+    errors,        // 유효성 검사 에러 { sender: '에러메시지', ... }
+    isSubmitting,  // 제출 중 여부 (true면 버튼 비활성화)
+    submitError,   // 서버 저장 실패 에러 메시지
+    handleChange,  // input onChange 핸들러
+    handleBlur,    // input onBlur 핸들러 (포커스 아웃 시 검증)
+    handleSubmit,  // form onSubmit 핸들러
   } = useLetterForm();
 
   return (
+    /*
+     * 📐 페이지 전체 레이아웃
+     * min-h-dvh        : 화면 전체 높이
+     * bg-bg-warm       : 배경색 (index.css @theme에서 수정)
+     * flex items-center justify-center : 수직/수평 가운데 정렬
+     * px-4 py-8        : 좌우 패딩 16px, 위아래 패딩 32px
+     *                    ✏️ 모바일에서 더 여유있게: px-6
+     */
     <div className="min-h-dvh bg-bg-warm flex items-center justify-center px-4 py-8">
-      {/* 배경 장식 */}
+
+      {/*
+       * 🎨 배경 장식 (블러 원형 그라디언트)
+       * fixed inset-0          : 화면 전체를 덮음
+       * pointer-events-none    : 클릭 이벤트 통과 (클릭 방해 안 함)
+       * overflow-hidden        : 원이 화면 밖으로 튀어나오지 않게
+       *
+       * ✏️ 배경 장식을 없애고 싶다면: 이 <div> 전체를 삭제하세요.
+       * ✏️ 색상 변경: bg-primary-light/15 → /15가 투명도 (0~100)
+       * ✏️ 크기 변경: w-64 h-64 → w-96 h-96
+       */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* 오른쪽 위 분홍 원 */}
         <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary-light/15 rounded-full blur-3xl" />
+        {/* 왼쪽 아래 골드 원 */}
         <div className="absolute -bottom-32 -left-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl" />
       </div>
 
+      {/*
+       * 📦 콘텐츠 래퍼
+       * w-full max-w-md : 최대 너비 448px (모바일에서는 전체 너비)
+       *                   ✏️ 더 넓게: max-w-lg (512px)
+       * relative z-10   : 배경 장식(z-0) 위에 표시
+       */}
       <motion.div
         className="w-full max-w-md relative z-10"
         variants={pageVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* 카네이션 이미지 헤더 */}
+        {/*
+         * 🌸 카네이션 이미지
+         * mb-4           : 카드와의 간격 (아래 마진 16px)
+         *                  ✏️ 간격 늘리기: mb-6 / mb-8
+         * w-28 h-28      : 이미지 크기 112px x 112px
+         *                  ✏️ 크게: w-36 h-36 / 작게: w-20 h-20
+         * drop-shadow-md : 이미지 자체에 그림자 (카드 그림자와 다름)
+         */}
         <motion.div
-          className="flex justify-center mb-4"
+          className="flex justify-center items-end gap-3 mb-10"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
-          <img
-            src="/carnation.png"
-            alt="카네이션"
-            className="w-28 h-28 object-contain drop-shadow-md"
-          />
+          <img src="/carnation.svg" alt="카네이션" className="w-[70px] h-[70px] object-contain" />
+          <img src="/heart.svg" alt="하트" className="w-[20px] h-[20px] object-contain mb-1 -translate-x-2" />
+          <img src="/lettericon.svg" alt="편지봉투" className="w-[50px] h-[50px] object-contain" />
         </motion.div>
 
-        {/* 카드 */}
-        <div className="bg-bg-card rounded-3xl shadow-xl border border-border-soft/60 overflow-hidden">
-          {/* 카드 헤더 */}
-          <div className="bg-gradient-to-r from-primary/8 to-primary-light/10 px-6 pt-6 pb-4 text-center">
+        {/*
+         * 🃏 메인 카드
+         * bg-bg-card     : 카드 배경 (흰색)
+         * rounded-3xl    : 모서리 둥글기. 더 작게: rounded-2xl / rounded-xl
+         * shadow-xl      : 그림자 크기. 더 크게: shadow-2xl / 없애기: shadow-none
+         * border border-border-soft/60 : 연한 테두리 (60% 투명도)
+         * overflow-hidden: 자식 요소가 카드 밖으로 나가지 않게 (상단 라인 등)
+         */}
+        <div className="w-full">
+
+          {/*
+           * 🎀 카드 헤더 (제목 영역)
+           * bg-gradient-to-r from-primary/8 to-primary-light/10
+           *   : 왼쪽에서 오른쪽으로 아주 연한 분홍 그라디언트
+           *   ✏️ 단색으로 바꾸려면: bg-primary/5
+           *   ✏️ 없애려면: bg-transparent
+           * px-6 pt-6 pb-4: 좌우 24px, 위 24px, 아래 16px 패딩
+           */}
+          <div className="px-6 pt-6 pb-4 text-center">
+            {/*
+             * 제목 텍스트
+             * text-2xl      : 폰트 크기 24px. ✏️ 크게: text-3xl / 작게: text-xl
+             * font-bold     : 두께. ✏️ 일반: font-semibold / font-normal
+             * font-serif    : 명조체 (Noto Serif KR)
+             * text-text-main: 진한 갈색 (index.css @theme에서 변경)
+             */}
             <motion.h1
-              className="text-2xl font-bold font-serif text-text-main"
+              className="text-[35px] font-normal font-serif text-text-main"
               custom={0}
               variants={itemVariants}
               initial="hidden"
               animate="visible"
+              style={{ marginBottom: '20px' }}
             >
-              부모님께 마음을 전하세요
+              부모님께 마음을 전하세요  {/* ✏️ 제목 텍스트를 여기서 수정 */}
             </motion.h1>
-            <motion.p
-              className="text-sm text-text-sub mt-1.5"
-              custom={1}
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              따뜻한 한 마디가 가장 큰 선물이 됩니다 💐
-            </motion.p>
           </div>
 
-          {/* 폼 영역 */}
-          <form onSubmit={handleSubmit} noValidate className="px-6 pb-6 pt-4">
-            {/* 제출 에러 메시지 */}
+          {/* 폼 영역 시작 */}
+          {/* 폼 영역 시작 */}
+          <form onSubmit={handleSubmit} noValidate className="px-6 pb-6 pt-2 flex flex-col items-center">
+
             {submitError && (
-              <motion.div
-                className="mb-4 p-3 bg-error/10 border border-error/20 rounded-xl text-sm text-error text-center"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-              >
+              <div className="mb-4 p-3 w-full max-w-[330px] bg-error/10 border border-error/20 rounded-xl text-sm text-error text-center">
                 {submitError}
-              </motion.div>
+              </div>
             )}
 
-            {/* 보내는 사람 / 받는 사람 (2열 레이아웃) */}
-            <motion.div
-              className="grid grid-cols-2 gap-3 mb-3"
-              custom={2}
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              <FormField
-                id="field-sender"
-                label="보내는 사람"
-                name="sender"
-                placeholder="이름"
-                value={formData.sender}
-                error={errors.sender}
-                maxLength={MAX_LENGTHS.sender}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <FormField
-                id="field-receiver"
-                label="받는 사람"
-                name="receiver"
-                placeholder="이름"
-                value={formData.receiver}
-                error={errors.receiver}
-                maxLength={MAX_LENGTHS.receiver}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </motion.div>
+            {/* 모든 요소를 편지지 영역(330px)에 고정시키기 위한 래퍼 */}
+            <div className="w-full max-w-[330px] flex flex-col gap-3">
 
-            {/* 편지 내용 */}
-            <motion.div
-              className="mb-3"
-              custom={3}
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              <label
-                htmlFor="field-content"
-                className="block text-sm font-medium text-text-main mb-1.5"
+              {/* 1. 받는 사람 & 비밀번호 (한 줄에 나란히) */}
+              <motion.div
+                className="flex items-center justify-between w-full"
+                custom={2} variants={itemVariants} initial="hidden" animate="visible"
               >
-                편지 내용
-              </label>
-              <textarea
-                id="field-content"
-                name="content"
-                rows={6}
-                placeholder="부모님께 전하고 싶은 말을 적어주세요..."
-                value={formData.content}
-                maxLength={MAX_LENGTHS.content}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`
-                  w-full px-4 py-3 rounded-xl border text-sm font-serif
-                  leading-relaxed resize-none
-                  bg-bg-warm/50 text-text-main placeholder-text-light
-                  transition-all duration-200
-                  focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50
-                  ${errors.content ? 'border-error/50 ring-1 ring-error/20' : 'border-border-soft'}
-                `}
-              />
-              <div className="flex justify-between mt-1">
-                {errors.content ? (
-                  <p className="text-xs text-error">{errors.content}</p>
-                ) : (
-                  <span />
-                )}
-                <span className="text-xs text-text-light">
-                  {formData.content.length}/{MAX_LENGTHS.content}
-                </span>
-              </div>
-            </motion.div>
+                {/* 받는 사람 */}
+                <div className="flex items-center gap-2">
+                  <label htmlFor="field-receiver" className="text-[20px] text-text-main whitespace-nowrap">
+                    받는 사람:
+                  </label>
+                  <input
+                    id="field-receiver" name="receiver" placeholder="이름"
+                    value={formData.receiver} maxLength={MAX_LENGTHS.receiver}
+                    onChange={handleChange} onBlur={handleBlur}
+                    className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[20px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
+                  />
+                </div>
 
-            {/* 비밀번호 */}
-            <motion.div
-              className="mb-6"
-              custom={4}
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              <label
-                htmlFor="field-password"
-                className="block text-sm font-medium text-text-main mb-1.5"
+                {/* 비밀번호 */}
+                <div className="flex items-center gap-2">
+                  <label htmlFor="field-password" className="text-[20px] text-text-main whitespace-nowrap">
+                    비밀번호:
+                  </label>
+                  <input
+                    id="field-password" type="password" name="password" inputMode="numeric" autoComplete="off" placeholder="0000"
+                    value={formData.password} maxLength={4}
+                    onChange={handleChange} onBlur={handleBlur}
+                    className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[20px] text-center tracking-widest font-mono text-text-main placeholder-text-main/40 focus:outline-none"
+                  />
+                </div>
+              </motion.div>
+
+              {/* 2. 편지 내용 (테두리 둥근 텍스트 박스) */}
+              <motion.div
+                className="relative w-full h-[352px]"
+                custom={3} variants={itemVariants} initial="hidden" animate="visible"
               >
-                비밀번호
-                <span className="text-text-light font-normal ml-1.5 text-xs">
-                  (숫자 4자리)
+                {/* 배경을 위한 레이어: 모서리가 날카롭게 튀어나오지 않게만 잡아줍니다 */}
+                <div className="absolute inset-0 bg-[#FFFEFB] rounded-[10px]"></div>
+
+                {/* 테두리 SVG 레이어: rounded 처리로 인해 잘리지(가려지지) 않도록 별도 레이어 배치 */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: `url('/letterarea.svg')`,
+                    backgroundSize: '100% 100%',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                ></div>
+
+                {/* 실제 텍스트 입력 영역 */}
+                <textarea
+                  id="field-content" name="content"
+                  placeholder="전하고 싶은 말을 적어주세요."
+                  value={formData.content} maxLength={MAX_LENGTHS.content}
+                  onChange={handleChange} onBlur={handleBlur}
+                  className="relative z-10 w-full h-full p-[24px] bg-transparent text-[20px] leading-loose resize-none text-text-main placeholder-text-main/40 focus:outline-none"
+                />
+              </motion.div>
+
+              {/* 3. 보내는 사람 (오른쪽 아래) */}
+              <motion.div
+                className="flex items-center justify-end gap-2 w-full"
+                custom={4} variants={itemVariants} initial="hidden" animate="visible"
+              >
+                <label htmlFor="field-sender" className="text-[20px] text-text-main whitespace-nowrap">
+                  보내는 사람:
+                </label>
+                <input
+                  id="field-sender" name="sender" placeholder="이름"
+                  value={formData.sender} maxLength={MAX_LENGTHS.sender}
+                  onChange={handleChange} onBlur={handleBlur}
+                  className="w-[90px] px-2 py-1 rounded-full bg-secondary text-[20px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
+                />
+              </motion.div>
+
+            </div>
+
+            {/* 4. 완성하기 버튼 (하트 이미지 배경) */}
+            <motion.div
+              className="flex justify-center mt-6 md:mt-10"
+              custom={5} variants={itemVariants} initial="hidden" animate="visible"
+            >
+              <button
+                type="submit" disabled={isSubmitting}
+                className="relative flex items-center justify-center w-[110px] h-[80px] hover:-translate-y-1 transition-transform cursor-pointer"
+              >
+                {/* 배경 하트 이미지 */}
+                <img src="/hearticon.svg" alt="완성" className="absolute inset-0 w-full h-full object-contain" />
+
+                {/* 버튼 텍스트 (위치는 mt-숫자 로 조절) */}
+                <span className="relative z-10 text-[20px] text-text-main mt-2">
+                  {isSubmitting ? '저장...' : '완성하기'}
                 </span>
-              </label>
-              <input
-                id="field-password"
-                type="password"
-                name="password"
-                inputMode="numeric"
-                autoComplete="off"
-                placeholder="● ● ● ●"
-                value={formData.password}
-                maxLength={4}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`
-                  w-full px-4 py-3 rounded-xl border text-sm text-center
-                  tracking-[0.5em] font-mono
-                  bg-bg-warm/50 text-text-main placeholder-text-light
-                  transition-all duration-200
-                  focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50
-                  ${errors.password ? 'border-error/50 ring-1 ring-error/20' : 'border-border-soft'}
-                `}
-              />
-              {errors.password && (
-                <p className="text-xs text-error mt-1">{errors.password}</p>
-              )}
+              </button>
             </motion.div>
 
-            {/* 완성하기 버튼 */}
-            <motion.button
-              type="submit"
-              disabled={isSubmitting}
-              className={`
-                w-full py-3.5 rounded-2xl text-white font-semibold text-base
-                transition-all duration-300 cursor-pointer
-                shadow-lg shadow-primary/20
-                ${
-                  isSubmitting
-                    ? 'bg-primary-light cursor-not-allowed'
-                    : 'bg-gradient-to-r from-primary to-primary-dark hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 active:translate-y-0'
-                }
-              `}
-              custom={5}
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
-              whileTap={!isSubmitting ? { scale: 0.98 } : {}}
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <LoadingSpinner />
-                  저장 중...
-                </span>
-              ) : (
-                '💌 완성하기'
-              )}
-            </motion.button>
           </form>
+          {/* 폼 영역 끝 */}
         </div>
 
-        {/* 하단 안내 */}
+        {/*
+         * 💬 카드 아래 안내 문구
+         * text-xs text-text-light : 작고 연한 텍스트
+         * mt-4                    : 카드와의 간격 16px
+         */}
         <motion.p
           className="text-center text-xs text-text-light mt-4"
           custom={6}
@@ -262,14 +302,25 @@ function WritePage() {
           initial="hidden"
           animate="visible"
         >
-          완성된 편지의 링크를 부모님께 보내드리세요 🌷
+          완성된 편지의 링크를 부모님께 보내드리세요 🌷  {/* ✏️ */}
         </motion.p>
       </motion.div>
     </div>
   );
 }
 
-/** 재사용 가능한 폼 입력 필드 컴포넌트 (SRP) */
+/* ─────────────────────────────────────────────────────
+   재사용 입력 필드 컴포넌트
+   ─────────────────────────────────────────────────────
+   보내는 사람 / 받는 사람 입력에 공통으로 사용됩니다.
+
+   스타일 설명:
+   - px-4 py-3        : 내부 패딩 (좌우 16px, 위아래 12px)
+   - rounded-xl       : 모서리 둥글기
+   - bg-bg-warm/50    : 따뜻한 크림색 배경 (50% 투명도)
+   - border-border-soft: 연한 테두리 (에러 없을 때)
+   - border-error/50  : 빨간 테두리 (에러 있을 때, 50% 투명도)
+   ───────────────────────────────────────────────────── */
 function FormField({ id, label, name, placeholder, value, error, maxLength, onChange, onBlur }) {
   return (
     <div>
@@ -293,12 +344,18 @@ function FormField({ id, label, name, placeholder, value, error, maxLength, onCh
           ${error ? 'border-error/50 ring-1 ring-error/20' : 'border-border-soft'}
         `}
       />
+      {/* 에러 메시지 (에러 있을 때만 표시) */}
       {error && <p className="text-xs text-error mt-1">{error}</p>}
     </div>
   );
 }
 
-/** 로딩 스피너 컴포넌트 */
+/* ─────────────────────────────────────────────────────
+   로딩 스피너 컴포넌트
+   ─────────────────────────────────────────────────────
+   버튼 클릭 후 Firebase 저장 중일 때 버튼 안에 표시됩니다.
+   animate-spin : Tailwind 기본 회전 애니메이션
+   ───────────────────────────────────────────────────── */
 function LoadingSpinner() {
   return (
     <svg

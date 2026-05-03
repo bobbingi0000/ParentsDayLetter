@@ -1,75 +1,209 @@
-/* ===================================
-   어버이날 편지 서비스 - 글로벌 스타일
-   =================================== */
+/* =====================================================================
+   어버이날 편지 서비스 - 글로벌 스타일 (index.css)
+   =====================================================================
 
-/* Google Fonts - Noto Serif KR (한글 명조) + Noto Sans KR (한글 고딕) */
+   📌 이 파일의 구조
+   1. 폰트 import (Google Fonts)
+   2. Tailwind CSS import
+   3. @theme — 디자인 토큰 (색상, 폰트) ← 색상 바꾸려면 여기만 수정!
+   4. Base Reset — 브라우저 기본 스타일 초기화
+   5. html / body — 전체 페이지 기본 설정
+   6. 스크롤바 / 포커스 / 선택 스타일 (소소한 디테일)
+
+   📌 Tailwind CSS 사용 방법
+   - 이 파일의 @theme 에서 정의한 색상은 className에서 바로 사용 가능합니다.
+   - 예) --color-primary: #D4546A → className="text-primary bg-primary"
+   - 예) --color-bg-warm: #FFF8F0 → className="bg-bg-warm"
+   - 예) --font-serif → className="font-serif"
+   ===================================================================== */
+
+
+/* ─────────────────────────────────────────────────────
+   1. 폰트 Import
+   ─────────────────────────────────────────────────────
+   Noto Sans KR  : UI 전반에 쓰이는 깔끔한 고딕체
+   Noto Serif KR : 편지 내용/제목에 쓰이는 감성적인 명조체
+
+   ✏️ 폰트를 바꾸고 싶다면?
+   - 아래 URL에서 원하는 폰트 이름으로 교체하고
+   - @theme 의 --font-sans, --font-serif 값도 함께 수정하세요.
+   - Google Fonts: https://fonts.google.com/?subset=korean
+   ───────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap');
 
+@font-face {
+  font-family: 'YunChorokwoosanEoriniMinguk';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408@1.0/YoonChildfundkoreaMinGuk.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────────────
+   2. Tailwind CSS Import
+   ─────────────────────────────────────────────────────
+   ⚠️ 반드시 @import url(...) 아래에 있어야 합니다.
+   Tailwind v4 방식입니다 (v3와 다름 — tailwind.config.js 없음).
+   ───────────────────────────────────────────────────── */
 @import "tailwindcss";
 
-/* Custom Theme Tokens */
+
+/* ─────────────────────────────────────────────────────
+   3. 디자인 토큰 (@theme)
+   ─────────────────────────────────────────────────────
+   🎨 전체 서비스의 색상/폰트를 한 곳에서 관리합니다.
+   여기서 색상을 바꾸면 서비스 전체에 자동으로 반영됩니다.
+
+   사용 방법 (Tailwind className):
+     --color-primary      → bg-primary / text-primary / border-primary
+     --color-bg-warm      → bg-bg-warm
+     --font-serif         → font-serif
+   ───────────────────────────────────────────────────── */
 @theme {
+  /* ── 메인 색상 (카네이션 분홍/빨강 계열) ──
+     primary      : 버튼, 강조 텍스트, 링크에 쓰이는 핵심 색상
+     primary-dark : 버튼 hover/active 상태, 그라디언트 끝부분
+     primary-light: 배경 장식, 연한 강조, 스크롤바 색
+     ✏️ 색상 변경 예시: 파란 계열로 바꾸고 싶다면
+        primary → #4A6FA5, primary-dark → #2E4F7A, primary-light → #A8C0E0 */
   --color-primary: #D4546A;
   --color-primary-dark: #B8344E;
   --color-primary-light: #F2A5B3;
-  --color-secondary: #8B5E3C;
+
+  /* ── 보조 색상 ──
+     secondary : 현재 거의 사용하지 않음 (추후 확장용)
+     accent    : 골드빛 포인트 색 (배경 장식 등에 사용) */
+  --color-secondary: #FADCDA;
   --color-accent: #E8B86D;
-  --color-bg-warm: #FFF8F0;
-  --color-bg-card: #FFFFFF;
-  --color-text-main: #3D2B1F;
+
+  /* ── 배경 색상 ──
+     bg-warm : 전체 페이지 배경. 따뜻한 크림색.
+               ✏️ 더 밝게: #FFFFFF / 더 어둡게: #FFF0E0 / 민트: #F0FAF5
+     bg-card : 카드(흰 박스) 배경. 보통 흰색 유지. */
+  --color-bg-warm: #FFF6F1;
+  --color-bg-card: #FFFEFB;
+
+  /* ── 텍스트 색상 ──
+     text-main  : 제목, 주요 본문 — 진한 갈색 (검정보다 따뜻한 느낌)
+     text-sub   : 부제목, 설명 텍스트 — 중간 톤
+     text-light : 힌트, 카운터, 날짜 등 가장 연한 텍스트
+     ✏️ 더 모던하게: text-main을 #1A1A1A로 바꾸면 더 샤프한 느낌 */
+  --color-text-main: #463736;
   --color-text-sub: #7A6A5E;
   --color-text-light: #B0A090;
+
+  /* ── 테두리 색상 ──
+     border-soft: 카드, 입력창 테두리. 연한 크림빛.
+     ✏️ 더 뚜렷하게: #D0C0B0 */
   --color-border-soft: #F0E0D0;
+
+  /* ── 상태 색상 ──
+     success: '복사 완료!' 버튼, 체크마크 — 초록
+     error  : 유효성 검사 에러 메시지, 에러 테두리 — 빨강 */
   --color-success: #5BA87C;
   --color-error: #D94F4F;
 
-  --font-sans: 'Noto Sans KR', sans-serif;
-  --font-serif: 'Noto Serif KR', serif;
+  /* ── 폰트 패밀리 ──
+     font-sans  : className="font-sans"  → UI 전반 (라벨, 버튼, 설명)
+     font-serif : className="font-serif" → 편지 내용, 감성적인 제목
+     ✏️ 폰트 변경 시 위의 @import url(...)도 함께 수정 필요 */
+  --font-sans: 'YunChorokwoosanEoriniMinguk', sans-serif;
+  --font-serif: 'YunChorokwoosanEoriniMinguk', serif;
 }
 
-/* Base Reset & Defaults */
+
+/* ─────────────────────────────────────────────────────
+   4. Base Reset
+   ─────────────────────────────────────────────────────
+   브라우저마다 다른 기본 여백/패딩을 0으로 초기화합니다.
+   box-sizing: border-box → padding/border가 width에 포함됨
+   (레이아웃 계산이 훨씬 직관적이어집니다)
+   ✏️ 건드리지 않는 것을 권장합니다.
+   ───────────────────────────────────────────────────── */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+
+/* ─────────────────────────────────────────────────────
+   5. html / body 기본 설정
+   ─────────────────────────────────────────────────────
+   ✏️ 자주 수정하는 항목:
+   - font-size: 16px → 더 크게 17px, 더 작게 15px
+   - line-height: 1.6 → 줄 간격. 편지 내용이 넓으면 1.8도 좋음
+   - background-color: 위의 --color-bg-warm 값을 따라감
+   ───────────────────────────────────────────────────── */
 html {
-  font-size: 16px;
+  font-size: 20px;
+  /* ← 전체 폰트 크기 기준. 모든 rem 값이 이 값 기준 */
   -webkit-font-smoothing: antialiased;
+  /* macOS/iOS 폰트 안티앨리어싱 */
   -moz-osx-font-smoothing: grayscale;
+  /* Firefox macOS 폰트 안티앨리어싱 */
 }
 
 body {
   font-family: var(--font-sans);
+  /* 기본 폰트: Noto Sans KR */
   color: var(--color-text-main);
+  /* 기본 글자색 */
   background-color: var(--color-bg-warm);
+  /* 전체 배경색 */
   line-height: 1.6;
+  /* ← 줄 간격. 커질수록 텍스트가 숨쉬는 느낌 */
   min-height: 100dvh;
+  /* 화면 전체 높이 확보 (모바일 주소창 고려한 dvh 사용) */
 }
 
-/* Scrollbar Styling */
+
+/* ─────────────────────────────────────────────────────
+   6. 스크롤바 스타일
+   ─────────────────────────────────────────────────────
+   Chrome/Safari/Edge에서만 적용됩니다 (Firefox 미지원).
+   ✏️ 스크롤바를 없애고 싶다면 width: 0 으로 설정
+   ───────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
+  /* ← 스크롤바 너비. 더 얇게: 4px, 숨기기: 0 */
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
+  /* 스크롤바 트랙(배경) — 투명 */
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-primary-light);
+  /* 스크롤바 색 */
   border-radius: 3px;
+  /* 스크롤바 둥근 모서리 */
 }
 
-/* Focus styles */
+
+/* ─────────────────────────────────────────────────────
+   7. 포커스 스타일 (접근성)
+   ─────────────────────────────────────────────────────
+   키보드로 탭 이동 시 어떤 요소가 선택됐는지 표시합니다.
+   :focus-visible → 마우스 클릭 시에는 나타나지 않고,
+                    키보드 탭 이동 시에만 나타납니다.
+   ✏️ outline 색상을 바꾸려면 var(--color-primary) 부분 수정
+   ───────────────────────────────────────────────────── */
 *:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Selection */
+
+/* ─────────────────────────────────────────────────────
+   8. 텍스트 선택 스타일
+   ─────────────────────────────────────────────────────
+   텍스트를 드래그해서 선택했을 때의 하이라이트 색상입니다.
+   ✏️ 배경색/글자색 변경 가능
+   ───────────────────────────────────────────────────── */
 ::selection {
   background: var(--color-primary-light);
+  /* 선택 영역 배경색 */
   color: var(--color-text-main);
+  /* 선택된 텍스트 글자색 */
 }
