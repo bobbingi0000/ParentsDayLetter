@@ -176,7 +176,6 @@ function WritePage() {
           </div>
 
           {/* 폼 영역 시작 */}
-          {/* 폼 영역 시작 */}
           <form onSubmit={handleSubmit} noValidate className="px-6 pb-6 pt-2 flex flex-col items-center">
 
             {submitError && (
@@ -195,27 +194,27 @@ function WritePage() {
               >
                 {/* 받는 사람 */}
                 <div className="flex items-center gap-2">
-                  <label htmlFor="field-receiver" className="text-[20px] text-text-main whitespace-nowrap">
+                  <label htmlFor="field-receiver" className="text-[18px] text-text-main whitespace-nowrap">
                     받는 사람:
                   </label>
                   <input
                     id="field-receiver" name="receiver" placeholder="이름"
                     value={formData.receiver} maxLength={MAX_LENGTHS.receiver}
                     onChange={handleChange} onBlur={handleBlur}
-                    className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[20px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
+                    className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[18px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
                   />
                 </div>
 
                 {/* 비밀번호 */}
                 <div className="flex items-center gap-2">
-                  <label htmlFor="field-password" className="text-[20px] text-text-main whitespace-nowrap">
+                  <label htmlFor="field-password" className="text-[18px] text-text-main whitespace-nowrap">
                     비밀번호:
                   </label>
                   <input
-                    id="field-password" type="password" name="password" inputMode="numeric" autoComplete="off" placeholder="0000"
+                    id="field-password" type="password" name="password" inputMode="numeric" autoComplete="off" placeholder="4자리수"
                     value={formData.password} maxLength={4}
                     onChange={handleChange} onBlur={handleBlur}
-                    className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[20px] text-center tracking-widest font-mono text-text-main placeholder-text-main/40 focus:outline-none"
+                    className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[18px] text-center tracking-widest font-mono text-text-main placeholder-text-main/40 placeholder:font-sans placeholder:tracking-normal focus:outline-none"
                   />
                 </div>
               </motion.div>
@@ -245,7 +244,8 @@ function WritePage() {
                   placeholder="전하고 싶은 말을 적어주세요."
                   value={formData.content} maxLength={MAX_LENGTHS.content}
                   onChange={handleChange} onBlur={handleBlur}
-                  className="relative z-10 w-full h-full p-[24px] bg-transparent text-[20px] leading-loose resize-none text-text-main placeholder-text-main/40 focus:outline-none"
+                  style={{ padding: '20px' }}
+                  className="relative z-10 w-full h-full bg-transparent text-[18px] leading-loose resize-none text-text-main placeholder-text-main/40 focus:outline-none"
                 />
               </motion.div>
 
@@ -254,14 +254,14 @@ function WritePage() {
                 className="flex items-center justify-end gap-2 w-full"
                 custom={4} variants={itemVariants} initial="hidden" animate="visible"
               >
-                <label htmlFor="field-sender" className="text-[20px] text-text-main whitespace-nowrap">
+                <label htmlFor="field-sender" className="text-[18px] text-text-main whitespace-nowrap">
                   보내는 사람:
                 </label>
                 <input
                   id="field-sender" name="sender" placeholder="이름"
                   value={formData.sender} maxLength={MAX_LENGTHS.sender}
                   onChange={handleChange} onBlur={handleBlur}
-                  className="w-[90px] px-2 py-1 rounded-full bg-secondary text-[20px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
+                  className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[18px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
                 />
               </motion.div>
 
@@ -269,19 +269,20 @@ function WritePage() {
 
             {/* 4. 완성하기 버튼 (하트 이미지 배경) */}
             <motion.div
-              className="flex justify-center mt-6 md:mt-10"
+              className="flex justify-center"
+              style={{ marginTop: '10px' }}
               custom={5} variants={itemVariants} initial="hidden" animate="visible"
             >
               <button
                 type="submit" disabled={isSubmitting}
-                className="relative flex items-center justify-center w-[110px] h-[80px] hover:-translate-y-1 transition-transform cursor-pointer"
+                className="relative flex items-center justify-center w-[100px] h-[70px] hover:-translate-y-1 transition-transform cursor-pointer"
               >
                 {/* 배경 하트 이미지 */}
                 <img src="/hearticon.svg" alt="완성" className="absolute inset-0 w-full h-full object-contain" />
 
                 {/* 버튼 텍스트 (위치는 mt-숫자 로 조절) */}
-                <span className="relative z-10 text-[20px] text-text-main mt-2">
-                  {isSubmitting ? '저장...' : '완성하기'}
+                <span className="relative z-10 text-[18px] text-text-main mt-2">
+                  {isSubmitting ? '완성 중...' : '완성하기'}
                 </span>
               </button>
             </motion.div>
@@ -296,11 +297,12 @@ function WritePage() {
          * mt-4                    : 카드와의 간격 16px
          */}
         <motion.p
-          className="text-center text-xs text-text-light mt-4"
+          className="text-center text-[14px] text-text-light"
           custom={6}
           variants={itemVariants}
           initial="hidden"
           animate="visible"
+          style={{ marginTop: '14px' }}
         >
           완성된 편지의 링크를 부모님께 보내드리세요 🌷  {/* ✏️ */}
         </motion.p>
