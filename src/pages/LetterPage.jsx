@@ -51,11 +51,11 @@ import { useLetter } from '../hooks/useLetter';
    ✏️ 색상 변경: rounded-full bg-primary-light/40 → bg-accent/40
    ───────────────────────────────────────────────────── */
 const petalPositions = [
-  { x: '-10%', y: '20%',  rotate: 45,  delay: 1.2, size: 10 }, // 왼쪽 중간
-  { x: '85%',  y: '15%',  rotate: -30, delay: 1.5, size: 8  }, // 오른쪽 위
-  { x: '75%',  y: '70%',  rotate: 60,  delay: 1.8, size: 12 }, // 오른쪽 아래
-  { x: '5%',   y: '65%',  rotate: -45, delay: 2.0, size: 9  }, // 왼쪽 아래
-  { x: '50%',  y: '10%',  rotate: 20,  delay: 1.3, size: 7  }, // 상단 가운데
+  { x: '-10%', y: '20%', rotate: 45, delay: 1.2, size: 10 }, // 왼쪽 중간
+  { x: '85%', y: '15%', rotate: -30, delay: 1.5, size: 8 }, // 오른쪽 위
+  { x: '75%', y: '70%', rotate: 60, delay: 1.8, size: 12 }, // 오른쪽 아래
+  { x: '5%', y: '65%', rotate: -45, delay: 2.0, size: 9 }, // 왼쪽 아래
+  { x: '50%', y: '10%', rotate: 20, delay: 1.3, size: 7 }, // 상단 가운데
 ];
 
 /* ─────────────────────────────────────────────────────
@@ -236,179 +236,124 @@ function LetterPage() {
    ───────────────────────────────────────────────────── */
 function LetterContent({ letter }) {
   return (
-    /*
-     * 전체 컨텐츠 최대 너비: max-w-lg (512px)
-     * ✏️ 더 넓게: max-w-xl (576px) / 더 좁게: max-w-md (448px)
-     */
-    <div className="w-full max-w-lg">
+    <div className="w-full max-w-md flex flex-col items-center">
 
       {/*
-       * 🌹 카네이션 이미지 섹션
-       * mb-8 : 아래 텍스트와 간격 32px. ✏️ mb-6 (좁게) / mb-12 (넓게)
+       * 🌹 카네이션 아이콘 (WritePage와 동일한 스타일)
        */}
       <motion.div
-        className="flex justify-center mb-8"
+        className="flex justify-center mb-2 translate-x-3"
         variants={carnationVariants}
         initial="hidden"
         animate="visible"
+        style={{ marginBottom: '4px' }}
       >
-        <div className="relative">
-          {/*
-           * 카네이션 뒤 글로우 (빛나는 효과)
-           * absolute inset-0 : 이미지와 같은 위치에 겹침
-           * bg-primary/10    : 분홍 10% 투명도
-           * blur-2xl         : 강한 블러로 빛나는 효과
-           * scale-125        : 이미지보다 25% 크게
-           *
-           * ✏️ 없애려면 이 <motion.div> 블록 삭제
-           * ✏️ 색상: bg-primary/10 → bg-accent/10 (골드빛 글로우)
-           */}
-          <motion.div
-            className="absolute inset-0 bg-primary/10 rounded-full blur-2xl scale-125"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.5, delay: 0.5 }}
-          />
-          {/*
-           * 카네이션 이미지
-           * w-40 h-40      : 160px × 160px
-           *                  ✏️ 크게: w-48 h-48 / 작게: w-32 h-32
-           * object-contain : 이미지 비율 유지
-           * drop-shadow-lg : 이미지 외곽 그림자
-           */}
-          <img
-            src="/carnation.png"
-            alt="카네이션"
-            className="relative w-40 h-40 object-contain drop-shadow-lg"
-          />
-        </div>
+        <img src="/carnation.svg" alt="카네이션" className="w-[70px] h-[70px] object-contain" />
       </motion.div>
 
       {/*
        * 💌 받는 사람 호칭 텍스트
-       * "사랑하는 OOO께" 형태
-       * text-lg font-serif : 18px 명조체
-       * text-primary       : 분홍/빨강 색상
-       * mb-4               : 아래 카드와 간격 16px
-       *
-       * ✏️ 문구 변경: "사랑하는" 부분을 원하는 호칭으로
-       * ✏️ 크게: text-xl / 색상: text-secondary (갈색)
+       * "사랑하는 OO께" — WritePage 제목과 동일한 스타일
        */}
       <motion.p
-        className="text-center text-lg text-primary font-serif font-semibold mb-4"
+        className="text-center text-[35px] font-normal text-text-main mb-6"
         custom={0.6}
         variants={textRevealVariants}
         initial="hidden"
         animate="visible"
+        style={{ marginBottom: '20px' }}
       >
-        사랑하는 {letter.receiver}께  {/* ✏️ "사랑하는" 부분 수정 가능 */}
+        사랑하는 {letter.receiver}께
       </motion.p>
 
-      {/*
-       * 🃏 편지 카드
-       * backdrop-blur-sm   : 카드 뒤가 살짝 흐릿하게 (glassmorphism 효과)
-       * bg-bg-card/90      : 흰색 90% (살짝 투명하여 배경 보임)
-       * rounded-3xl        : 큰 둥근 모서리
-       * overflow-hidden    : 상단 색상 라인이 모서리에 맞게 잘림
-       */}
-      <motion.div
-        className="bg-bg-card/90 backdrop-blur-sm rounded-3xl shadow-xl
-          border border-border-soft/60 overflow-hidden"
-        variants={letterCardVariants}
-        initial="hidden"
-        animate="visible"
-      >
+
+      <div className="w-full max-w-[330px] mx-auto">
         {/*
-         * 상단 장식 라인 (카드 맨 위에 얇은 그라디언트 선)
-         * h-1 : 4px 높이
-         * ✏️ 더 두껍게: h-1.5 또는 h-2
-         * ✏️ 단색으로: bg-primary
-         * ✏️ 없애려면: 이 <div> 삭제
-         */}
-        <div className="h-1 bg-gradient-to-r from-primary-light via-primary to-primary-light" />
-
-        {/*
-         * 편지 본문 패딩 영역
-         * px-7 py-8            : 좌우 28px, 위아래 32px
-         * sm:px-10 sm:py-10   : 태블릿 이상: 좌우 40px, 위아래 40px
-         * ✏️ 더 여유있게: px-8 py-10 / 더 좁게: px-5 py-6
-         */}
-        <div className="px-7 py-8 sm:px-10 sm:py-10">
-
-          {/*
-           * 편지 본문 텍스트
-           * font-serif     : 명조체 (편지 느낌)
-           * text-base      : 16px (모바일)
-           * sm:text-lg     : 18px (태블릿+)
-           *                  ✏️ 항상 크게: text-lg / text-xl
-           * leading-loose  : 줄 간격 매우 넓게 (편지 느낌)
-           *                  ✏️ 좁게: leading-relaxed / leading-normal
-           * whitespace-pre-wrap : 줄바꿈(\n) 보존 (사용자가 입력한 줄바꿈 그대로)
-           * break-words    : 긴 단어/URL이 카드 밖으로 나가지 않게
-           */}
-          <motion.div
-            className="font-serif text-base sm:text-lg leading-loose text-text-main
-              whitespace-pre-wrap break-words"
-            custom={1.2}
-            variants={textRevealVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {letter.content}
-          </motion.div>
-
-          {/*
-           * ✍️ 보낸 사람 서명 + 날짜
-           * mt-8 pt-6          : 위 여백 32px + 패딩 24px
-           * border-t           : 위에 구분선
-           * text-right         : 오른쪽 정렬 (편지 서명 스타일)
-           *
-           * ✏️ 날짜 숨기기: {letter.createdAt && ...} 블록 삭제
-           * ✏️ "드림" 대신 다른 표현: "올림", "보냄" 등
-           */}
-          <motion.div
-            className="mt-8 pt-6 border-t border-border-soft/50 text-right"
-            custom={1.6}
-            variants={textRevealVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <p className="text-base font-serif text-text-sub">
-              {letter.sender} 드림  {/* ✏️ "드림" 부분 수정 가능: "올림", "보냄" */}
-            </p>
-            {/* 편지 작성 날짜 (Firestore createdAt 필드) */}
-            {letter.createdAt && (
-              <p className="text-xs text-text-light mt-1.5">
-                {formatDate(letter.createdAt)}
-              </p>
-            )}
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/*
-       * 🌷 하단 안내 + 링크
-       * "나도 편지 쓰기" 링크는 / 홈으로 이동합니다.
-       * ✏️ 없애고 싶으면 이 <motion.div> 블록 전체 삭제
+       * 📝 편지 본문 — WritePage의 letterarea와 동일한 크기/디자인
+       * w-full max-w-[330px] h-[352px] : WritePage textarea와 동일
+       * letterarea.svg 배경 사용
        */}
-      <motion.div
-        className="mt-8 text-center"
-        variants={footerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <p className="text-sm text-text-light mb-4">
-          소중한 마음이 전달되었습니다 🌷  {/* ✏️ 하단 안내 문구 */}
-        </p>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 text-sm text-primary/70
-            hover:text-primary font-medium transition-colors duration-200"
+        <motion.div
+          className="w-full flex justify-center"
+          variants={letterCardVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <HeartIcon />
-          나도 편지 쓰기  {/* ✏️ 링크 텍스트 */}
-        </Link>
-      </motion.div>
+          <div className="relative w-full max-w-[330px] mx-auto h-[352px]">
+            {/* 배경 레이어 */}
+            <div className="absolute inset-0 bg-[#FFFEFB] rounded-[10px]" />
+
+            {/* letterarea.svg 테두리 */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: `url('/letterarea.svg')`,
+                backgroundSize: '100% 100%',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+
+            {/* 편지 본문 텍스트 */}
+            <motion.div
+              className="relative z-10 w-full h-full overflow-y-auto text-[18px] leading-loose text-text-main whitespace-pre-wrap break-words"
+              style={{ padding: '20px' }}
+              custom={1.2}
+              variants={textRevealVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {letter.content}
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/*
+       * ✍️ 보낸 사람 서명 + 날짜 (오른쪽 정렬)
+       */}
+        <motion.div
+          className="w-full max-w-[330px] mx-auto text-right"
+          custom={1.6}
+          variants={textRevealVariants}
+          initial="hidden"
+          animate="visible"
+          style={{
+            marginTop: '4px',
+            marginBottom: '8px'
+          }}
+        >
+          {letter.createdAt && (
+            <p className="text-[18px] text-text-main">
+              {formatDate(letter.createdAt)}
+            </p>
+          )}
+          <div className="flex items-center justify-end gap-2">
+            <span className="px-2 py-0.5 rounded-full bg-secondary ptext-[18px] text-text-main">
+              {letter.sender}
+            </span>
+            <span className="text-[18px] text-text-main">올림</span>
+          </div>
+        </motion.div>
+
+        {/*
+       * 🌷 하단 "나도 편지 쓰기" 링크
+       */}
+        <motion.div
+          className="mt-8 text-center"
+          variants={footerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <Link
+            to="/"
+            className="text-[14px] text-primary hover:text-primary-dark font-medium
+            transition-colors duration-200 underline underline-offset-4 decoration-primary/30
+            hover:decoration-primary"
+          >
+            나도 편지 쓰기 →
+          </Link>
+        </motion.div>
+      </div>
     </div>
   );
 }
