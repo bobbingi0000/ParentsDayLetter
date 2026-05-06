@@ -26,7 +26,6 @@
  *   - 편지 카드 최대 너비  → max-w-lg (512px) 수정
  *   - 편지 본문 폰트 크기  → text-base sm:text-lg 수정
  *   - 상단 색상 라인        → h-1 bg-gradient-to-r 수정
- *   - 꽃잎 수/크기/위치    → petalPositions 배열 수정
  * =====================================================================
  */
 
@@ -35,35 +34,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLetter } from '../hooks/useLetter';
 
 /* ─────────────────────────────────────────────────────
-   꽃잎 파티클 설정
-   ─────────────────────────────────────────────────────
-   편지 로드 성공 시 화면 주변에 떠다니는 분홍 원형 파티클입니다.
-   각 객체의 의미:
-     x      : 화면 왼쪽에서의 거리 (%)
-     y      : 화면 위에서의 거리 (%)
-     rotate : 회전 각도
-     delay  : 등장 딜레이 (초)
-     size   : 원 크기 (px)
-
-   ✏️ 파티클을 없애려면: 아래 <AnimatePresence> 블록 전체 삭제
-   ✏️ 파티클 추가: 객체를 하나 더 추가하세요
-   ✏️ 크기 조절: size 값 변경
-   ✏️ 색상 변경: rounded-full bg-primary-light/40 → bg-accent/40
-   ───────────────────────────────────────────────────── */
-const petalPositions = [
-  { x: '-10%', y: '20%', rotate: 45, delay: 1.2, size: 10 }, // 왼쪽 중간
-  { x: '85%', y: '15%', rotate: -30, delay: 1.5, size: 8 }, // 오른쪽 위
-  { x: '75%', y: '70%', rotate: 60, delay: 1.8, size: 12 }, // 오른쪽 아래
-  { x: '5%', y: '65%', rotate: -45, delay: 2.0, size: 9 }, // 왼쪽 아래
-  { x: '50%', y: '10%', rotate: 20, delay: 1.3, size: 7 }, // 상단 가운데
-];
-
-/* ─────────────────────────────────────────────────────
    애니메이션 variants
    ─────────────────────────────────────────────────────
    ✏️ duration 값을 줄이면 더 빠르게, 늘리면 더 느리게
    ✏️ ease 옵션: 'easeOut', 'easeIn', 'easeInOut', 'linear'
    ───────────────────────────────────────────────────── */
+
 
 /**
  * 카네이션 이미지 애니메이션
@@ -161,51 +137,6 @@ function LetterPage() {
         <div className="absolute top-1/3 -right-24 w-64 h-64 bg-primary-light/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 -left-16 w-56 h-56 bg-accent/8 rounded-full blur-3xl" />
       </div>
-
-      {/*
-       * 🌸 꽃잎 파티클 애니메이션
-       * AnimatePresence : 조건부 렌더링 요소에 exit 애니메이션 적용 가능
-       * status === 'success' 일 때만 표시됩니다.
-       *
-       * 각 파티클:
-       * - opacity: 0 → 0.5 → 0.3 (나타났다 살짝 흐려짐)
-       * - y: 위아래로 움직임 (reverse로 왔다갔다)
-       * - rotate: 회전
-       * - repeat: Infinity → 무한 반복
-       */}
-      <AnimatePresence>
-        {status === 'success' &&
-          petalPositions.map((petal, i) => (
-            <motion.div
-              key={i}
-              className="fixed pointer-events-none z-0"
-              style={{ left: petal.x, top: petal.y }}
-              initial={{ opacity: 0, y: -20, rotate: 0 }}
-              animate={{
-                opacity: [0, 0.5, 0.3],
-                y: ['-20px', '30px', '60px'],
-                rotate: [0, petal.rotate, petal.rotate * 1.5],
-              }}
-              transition={{
-                duration: 4,                // ✏️ 파티클 한 사이클 시간
-                delay: petal.delay,
-                repeat: Infinity,
-                repeatType: 'reverse',      // 왔다갔다
-                ease: 'easeInOut',
-              }}
-            >
-              {/*
-               * 파티클 원형 요소
-               * ✏️ 색상: bg-primary-light/40 → bg-accent/40 (골드빛)
-               * ✏️ 모양: rounded-full(원) → rounded-lg(사각)
-               */}
-              <div
-                className="rounded-full bg-primary-light/40"
-                style={{ width: petal.size, height: petal.size }}
-              />
-            </motion.div>
-          ))}
-      </AnimatePresence>
 
       {/*
        * 📌 메인 콘텐츠 영역
