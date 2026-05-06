@@ -32,10 +32,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap');
 
 @font-face {
-  font-family: 'YunChorokwoosanEoriniMinguk';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408@1.0/YoonChildfundkoreaMinGuk.woff2') format('woff2');
-  font-weight: normal;
-  font-display: swap;
+   font-family: 'YunChorokwoosanEoriniMinguk';
+   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408@1.0/YoonChildfundkoreaMinGuk.woff2') format('woff2');
+   font-weight: normal;
+   font-display: swap;
 }
 
 /* ─────────────────────────────────────────────────────
@@ -59,55 +59,55 @@
      --font-serif         → font-serif
    ───────────────────────────────────────────────────── */
 @theme {
-  /* ── 메인 색상 (카네이션 분홍/빨강 계열) ──
+   /* ── 메인 색상 (카네이션 분홍/빨강 계열) ──
      primary      : 버튼, 강조 텍스트, 링크에 쓰이는 핵심 색상
      primary-dark : 버튼 hover/active 상태, 그라디언트 끝부분
      primary-light: 배경 장식, 연한 강조, 스크롤바 색
      ✏️ 색상 변경 예시: 파란 계열로 바꾸고 싶다면
         primary → #4A6FA5, primary-dark → #2E4F7A, primary-light → #A8C0E0 */
-  --color-primary: #D4546A;
-  --color-primary-dark: #B8344E;
-  --color-primary-light: #F2A5B3;
+   --color-primary: #F65784;
+   --color-primary-dark: #B8344E;
+   --color-primary-light: #F2A5B3;
 
-  /* ── 보조 색상 ──
+   /* ── 보조 색상 ──
      secondary : 현재 거의 사용하지 않음 (추후 확장용)
      accent    : 골드빛 포인트 색 (배경 장식 등에 사용) */
-  --color-secondary: #FADCDA;
-  --color-accent: #E8B86D;
+   --color-secondary: #FFD2D2;
+   --color-accent: #E8B86D;
 
-  /* ── 배경 색상 ──
+   /* ── 배경 색상 ──
      bg-warm : 전체 페이지 배경. 따뜻한 크림색.
                ✏️ 더 밝게: #FFFFFF / 더 어둡게: #FFF0E0 / 민트: #F0FAF5
      bg-card : 카드(흰 박스) 배경. 보통 흰색 유지. */
-  --color-bg-warm: #FFF6F1;
-  --color-bg-card: #FFFEFB;
+   --color-bg-warm: #FFF6F1;
+   --color-bg-card: #FFFEFB;
 
-  /* ── 텍스트 색상 ──
+   /* ── 텍스트 색상 ──
      text-main  : 제목, 주요 본문 — 진한 갈색 (검정보다 따뜻한 느낌)
      text-sub   : 부제목, 설명 텍스트 — 중간 톤
      text-light : 힌트, 카운터, 날짜 등 가장 연한 텍스트
      ✏️ 더 모던하게: text-main을 #1A1A1A로 바꾸면 더 샤프한 느낌 */
-  --color-text-main: #463736;
-  --color-text-sub: #7A6A5E;
-  --color-text-light: #B0A090;
+   --color-text-main: #463736;
+   --color-text-sub: #AD8481;
+   --color-text-light: #B0A090;
 
-  /* ── 테두리 색상 ──
+   /* ── 테두리 색상 ──
      border-soft: 카드, 입력창 테두리. 연한 크림빛.
      ✏️ 더 뚜렷하게: #D0C0B0 */
-  --color-border-soft: #F0E0D0;
+   --color-border-soft: #F0E0D0;
 
-  /* ── 상태 색상 ──
+   /* ── 상태 색상 ──
      success: '복사 완료!' 버튼, 체크마크 — 초록
      error  : 유효성 검사 에러 메시지, 에러 테두리 — 빨강 */
-  --color-success: #5BA87C;
-  --color-error: #D94F4F;
+   --color-success: #5BA87C;
+   --color-error: #D94F4F;
 
-  /* ── 폰트 패밀리 ──
+   /* ── 폰트 패밀리 ──
      font-sans  : className="font-sans"  → UI 전반 (라벨, 버튼, 설명)
      font-serif : className="font-serif" → 편지 내용, 감성적인 제목
      ✏️ 폰트 변경 시 위의 @import url(...)도 함께 수정 필요 */
-  --font-sans: 'YunChorokwoosanEoriniMinguk', sans-serif;
-  --font-serif: 'YunChorokwoosanEoriniMinguk', serif;
+   --font-sans: 'YunChorokwoosanEoriniMinguk', sans-serif;
+   --font-serif: 'YunChorokwoosanEoriniMinguk', serif;
 }
 
 
@@ -120,9 +120,9 @@
    ✏️ 건드리지 않는 것을 권장합니다.
    ───────────────────────────────────────────────────── */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
 }
 
 
@@ -135,25 +135,25 @@
    - background-color: 위의 --color-bg-warm 값을 따라감
    ───────────────────────────────────────────────────── */
 html {
-  font-size: 20px;
-  /* ← 전체 폰트 크기 기준. 모든 rem 값이 이 값 기준 */
-  -webkit-font-smoothing: antialiased;
-  /* macOS/iOS 폰트 안티앨리어싱 */
-  -moz-osx-font-smoothing: grayscale;
-  /* Firefox macOS 폰트 안티앨리어싱 */
+   font-size: 20px;
+   /* ← 전체 폰트 크기 기준. 모든 rem 값이 이 값 기준 */
+   -webkit-font-smoothing: antialiased;
+   /* macOS/iOS 폰트 안티앨리어싱 */
+   -moz-osx-font-smoothing: grayscale;
+   /* Firefox macOS 폰트 안티앨리어싱 */
 }
 
 body {
-  font-family: var(--font-sans);
-  /* 기본 폰트: Noto Sans KR */
-  color: var(--color-text-main);
-  /* 기본 글자색 */
-  background-color: var(--color-bg-warm);
-  /* 전체 배경색 */
-  line-height: 1.6;
-  /* ← 줄 간격. 커질수록 텍스트가 숨쉬는 느낌 */
-  min-height: 100dvh;
-  /* 화면 전체 높이 확보 (모바일 주소창 고려한 dvh 사용) */
+   font-family: var(--font-sans);
+   /* 기본 폰트: Noto Sans KR */
+   color: var(--color-text-main);
+   /* 기본 글자색 */
+   background-color: var(--color-bg-warm);
+   /* 전체 배경색 */
+   line-height: 1.6;
+   /* ← 줄 간격. 커질수록 텍스트가 숨쉬는 느낌 */
+   min-height: 100dvh;
+   /* 화면 전체 높이 확보 (모바일 주소창 고려한 dvh 사용) */
 }
 
 
@@ -164,20 +164,20 @@ body {
    ✏️ 스크롤바를 없애고 싶다면 width: 0 으로 설정
    ───────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  /* ← 스크롤바 너비. 더 얇게: 4px, 숨기기: 0 */
+   width: 6px;
+   /* ← 스크롤바 너비. 더 얇게: 4px, 숨기기: 0 */
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
-  /* 스크롤바 트랙(배경) — 투명 */
+   background: transparent;
+   /* 스크롤바 트랙(배경) — 투명 */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary-light);
-  /* 스크롤바 색 */
-  border-radius: 3px;
-  /* 스크롤바 둥근 모서리 */
+   background: var(--color-primary-light);
+   /* 스크롤바 색 */
+   border-radius: 3px;
+   /* 스크롤바 둥근 모서리 */
 }
 
 
@@ -190,8 +190,8 @@ body {
    ✏️ outline 색상을 바꾸려면 var(--color-primary) 부분 수정
    ───────────────────────────────────────────────────── */
 *:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+   outline: 2px solid var(--color-primary);
+   outline-offset: 2px;
 }
 
 
@@ -202,8 +202,8 @@ body {
    ✏️ 배경색/글자색 변경 가능
    ───────────────────────────────────────────────────── */
 ::selection {
-  background: var(--color-primary-light);
-  /* 선택 영역 배경색 */
-  color: var(--color-text-main);
-  /* 선택된 텍스트 글자색 */
+   background: var(--color-primary-light);
+   /* 선택 영역 배경색 */
+   color: var(--color-text-main);
+   /* 선택된 텍스트 글자색 */
 }
