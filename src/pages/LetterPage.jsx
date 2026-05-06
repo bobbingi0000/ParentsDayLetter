@@ -150,11 +150,25 @@ function LetterPage() {
        * - success   → 실제 편지 내용
        */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-dvh px-4 py-10">
-        {status === 'loading' && <LoadingSkeleton />}
-        {(status === 'error' || status === 'not-found') && (
-          <ErrorState message={error} />
-        )}
-        {status === 'success' && letter && <LetterContent letter={letter} />}
+        <AnimatePresence mode="wait">
+          {status === 'loading' && (
+            <motion.div key="loading" exit={{ opacity: 0, transition: { duration: 0.2 } }}>
+              <LoadingSkeleton />
+            </motion.div>
+          )}
+
+          {(status === 'error' || status === 'not-found') && (
+            <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ErrorState message={error} />
+            </motion.div>
+          )}
+
+          {status === 'success' && letter && (
+            <motion.div key="success" className="w-full">
+              <LetterContent letter={letter} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

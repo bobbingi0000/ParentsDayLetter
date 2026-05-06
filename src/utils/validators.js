@@ -32,7 +32,7 @@ const fieldValidators = {
   content: (value) => {
     if (!value.trim()) return '편지 내용을 입력해 주세요.';
     const length = [...value.trim()].length;
-    if (length < 10) return '편지 내용은 최소 10자 이상 입력해 주세요.';
+    if (length < 1) return '편지 내용은 최소 1자 이상 입력해 주세요.';
     if (length > MAX_LENGTHS.content)
       return `편지 내용은 ${MAX_LENGTHS.content}자 이내로 입력해 주세요.`;
     return null;
