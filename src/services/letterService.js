@@ -6,7 +6,7 @@
  * Firestore를 다른 DB로 교체하더라도 이 파일만 수정하면 됩니다.
  */
 
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, increment } from 'firebase/firestore';
 import { db } from '../firebase';
 import { nanoid } from 'nanoid';
 
@@ -51,7 +51,17 @@ export async function createLetter(letterData) {
     createdAt: serverTimestamp(),
   };
 
+  // 트랜잭션 없이 각각의 문서 업데이트 수행 (개인 앱 수준에선 충분함)
   await setDoc(doc(db, COLLECTION_NAME, id), letterDoc);
+
+  // 카운터 문서도 업데이트 (실패해도 편지 발송에는 영향 없도록 try-catch 안에서 처리 안함)
+  try {
+    const statDocRef = doc(db, 'stats', 'letters');
+    await setDoc(statDocRef, { count: increment(1) }, { merge: true });
+  } catch (err) {
+    console.error("카운터 증가 실패:", err);
+  }
+
   return id;
 }
 
@@ -70,4 +80,22 @@ export async function getLetterById(id) {
   // 비밀번호 해시는 클라이언트에 반환하지 않음 (보안)
   const { password, ...safeData } = data;
   return safeData;
+}
+
+/**
+ * 누적 편지 개수 조회
+ * @returns {Promise<number>} 누적 편지 개수
+ */
+export async function getLetterCount() {
+  try {
+    const statDocRef = doc(db, 'stats', 'letters');
+    const statSnap = await getDoc(statDocRef);
+    if (statSnap.exists()) {
+      return statSnap.data().count || 0;
+    }
+    return 0;
+  } catch (err) {
+    console.error("카운터 조회 실패:", err);
+    return 0;
+  }
 }

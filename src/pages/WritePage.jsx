@@ -23,9 +23,11 @@
  * =====================================================================
  */
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLetterForm } from '../hooks/useLetterForm';
 import { MAX_LENGTHS } from '../utils/validators';
+import { getLetterCount } from '../services/letterService';
 
 /* ─────────────────────────────────────────────────────
    애니메이션 설정 (Framer Motion)
@@ -67,6 +69,14 @@ const itemVariants = {
    메인 컴포넌트
    ───────────────────────────────────────────────────── */
 function WritePage() {
+  // 누적 편지 수 상태
+  const [totalCount, setTotalCount] = useState(0);
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 누적 편지 수를 한 번만 가져옵니다.
+    getLetterCount().then(setTotalCount);
+  }, []);
+
   // 폼 상태 및 이벤트 핸들러를 훅에서 가져옵니다.
   const {
     formData,      // 현재 입력값 { sender, receiver, content, password }
@@ -311,6 +321,21 @@ function WritePage() {
         >
           완성된 편지의 링크를 부모님께 보내드리세요 🌷  {/* ✏️ */}
         </motion.p>
+
+        {/*
+         * 💌 누적 편지 수 표시
+         * totalCount가 0보다 클 때만 보여줍니다.
+         */}
+        {totalCount > 0 && (
+          <motion.p
+            className="text-center text-[14px] text-primary mt-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.0, duration: 0.8 }}
+          >
+            지금까지 {totalCount.toLocaleString()}통의 마음이 전해졌어요 💌
+          </motion.p>
+        )}
       </motion.div>
     </div>
   );
