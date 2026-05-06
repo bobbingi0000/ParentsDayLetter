@@ -327,8 +327,8 @@ function LetterContent({ letter }) {
               {formatDate(letter.createdAt)}
             </p>
           )}
-          <div className="flex items-center justify-end gap-2">
-            <span className="px-2 py-0.5 rounded-full bg-secondary ptext-[18px] text-text-main">
+          <div className="flex items-center justify-end gap-1">
+            <span className="inline-block min-w-[70px] px-4 py-0.5 rounded-full bg-secondary text-[18px] text-center text-text-main">
               {letter.sender}
             </span>
             <span className="text-[18px] text-text-main">올림</span>
