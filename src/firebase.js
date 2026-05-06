@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore"; // 편지 저장용 DB 추가!
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,6 +15,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // 필요한 기능들 내보내기 (다른 파일에서 import 해서 사용)
-export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 export default app;

@@ -17,22 +17,23 @@ const MAX_LENGTHS = {
 const fieldValidators = {
   sender: (value) => {
     if (!value.trim()) return '보내는 사람 이름을 입력해 주세요.';
-    if (value.trim().length > MAX_LENGTHS.sender)
+    if ([...value.trim()].length > MAX_LENGTHS.sender)
       return `이름은 ${MAX_LENGTHS.sender}자 이내로 입력해 주세요.`;
     return null;
   },
 
   receiver: (value) => {
     if (!value.trim()) return '받는 사람 이름을 입력해 주세요.';
-    if (value.trim().length > MAX_LENGTHS.receiver)
+    if ([...value.trim()].length > MAX_LENGTHS.receiver)
       return `이름은 ${MAX_LENGTHS.receiver}자 이내로 입력해 주세요.`;
     return null;
   },
 
   content: (value) => {
     if (!value.trim()) return '편지 내용을 입력해 주세요.';
-    if (value.trim().length < 10) return '편지 내용은 최소 10자 이상 입력해 주세요.';
-    if (value.trim().length > MAX_LENGTHS.content)
+    const length = [...value.trim()].length;
+    if (length < 10) return '편지 내용은 최소 10자 이상 입력해 주세요.';
+    if (length > MAX_LENGTHS.content)
       return `편지 내용은 ${MAX_LENGTHS.content}자 이내로 입력해 주세요.`;
     return null;
   },
