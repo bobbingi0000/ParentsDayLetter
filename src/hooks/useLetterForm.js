@@ -7,7 +7,7 @@
 
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { validateForm, validateField } from '../utils/validators';
+import { validateForm, validateField, MAX_LENGTHS } from '../utils/validators';
 import { sanitizeFormData } from '../utils/sanitize';
 import { createLetter } from '../services/letterService';
 
@@ -39,6 +39,8 @@ export function useLetterForm() {
       const numericOnly = value.replace(/\D/g, '').slice(0, 4);
       setFormData((prev) => ({ ...prev, [name]: numericOnly }));
     } else {
+      // 이모지 포함 실제 글자 수 체크
+      if ([...value].length > MAX_LENGTHS[name]) return;
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
 
@@ -70,6 +72,9 @@ export function useLetterForm() {
     const { isValid, errors: validationErrors } = validateForm(formData);
     if (!isValid) {
       setErrors(validationErrors);
+      // 에러 메시지 중 첫 번째 것을 골라서 알림창으로 띄워줍니다.
+      const firstError = Object.values(validationErrors)[0];
+      if (firstError) alert(firstError);
       return;
     }
 
@@ -109,6 +114,5 @@ export function useLetterForm() {
     handleChange,
     handleBlur,
     handleSubmit,
-    resetForm,
   };
 }

@@ -328,10 +328,10 @@ function LetterContent({ letter }) {
             </p>
           )}
           <div className="flex items-center justify-end gap-1">
-            <span className="inline-block min-w-[70px] px-4 py-0.5 rounded-full bg-secondary text-[18px] text-center text-text-main">
+            <span className="inline-block min-w-[70px] max-w-[180px] truncate px-4 py-0.5 rounded-full bg-secondary text-[18px] text-center text-text-main">
               {letter.sender}
             </span>
-            <span className="text-[18px] text-text-main">올림</span>
+            <span className="text-[18px] shrink-0 text-text-main">올림</span>
           </div>
         </motion.div>
 
@@ -453,24 +453,6 @@ function formatDate(timestamp) {
   } catch {
     return ''; // 날짜 파싱 실패 시 빈 문자열
   }
-}
-
-/** 하트 아이콘 — "나도 편지 쓰기" 링크 옆에 표시 */
-function HeartIcon() {
-  return (
-    <svg
-      className="w-4 h-4"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-        2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81
-        14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4
-        6.86-8.55 11.54L12 21.35z"
-      />
-    </svg>
-  );
 }
 
 export default LetterPage;
