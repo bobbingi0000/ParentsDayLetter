@@ -199,7 +199,7 @@ function WritePage() {
                   </label>
                   <input
                     id="field-receiver" name="receiver" placeholder="이름"
-                    value={formData.receiver} maxLength={MAX_LENGTHS.receiver}
+                    value={formData.receiver}
                     onChange={handleChange} onBlur={handleBlur}
                     className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[18px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
                   />
@@ -211,7 +211,7 @@ function WritePage() {
                     비밀번호:
                   </label>
                   <input
-                    id="field-password" type="password" name="password" inputMode="numeric" autoComplete="off" placeholder="4자리수"
+                    id="field-password" type="password" name="password" inputMode="numeric" autoComplete="new-password" placeholder="4자리수"
                     value={formData.password} maxLength={4}
                     onChange={handleChange} onBlur={handleBlur}
                     className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[18px] text-center tracking-widest font-mono text-text-main placeholder-text-main/40 placeholder:font-sans placeholder:tracking-normal focus:outline-none"
@@ -242,11 +242,16 @@ function WritePage() {
                 <textarea
                   id="field-content" name="content"
                   placeholder="전하고 싶은 말을 적어주세요."
-                  value={formData.content} maxLength={MAX_LENGTHS.content}
+                  value={formData.content}
                   onChange={handleChange} onBlur={handleBlur}
-                  style={{ padding: '20px' }}
+                  style={{ padding: '20px', paddingBottom: '36px' }}
                   className="relative z-10 w-full h-full bg-transparent text-[18px] leading-loose resize-none text-text-main placeholder-text-main/40 focus:outline-none"
                 />
+
+                {/* 글자 수 표시기 */}
+                <div className="absolute bottom-3 right-5 z-20 text-[13px] text-text-main/40 pointer-events-none font-sans tracking-wide">
+                  {[...formData.content].length} / {MAX_LENGTHS.content}
+                </div>
               </motion.div>
 
               {/* 3. 보내는 사람 (오른쪽 아래) */}
@@ -259,7 +264,7 @@ function WritePage() {
                 </label>
                 <input
                   id="field-sender" name="sender" placeholder="이름"
-                  value={formData.sender} maxLength={MAX_LENGTHS.sender}
+                  value={formData.sender}
                   onChange={handleChange} onBlur={handleBlur}
                   className="w-[70px] px-2 py-1 rounded-full bg-secondary text-[18px] text-center text-text-main placeholder-text-main/40 focus:outline-none"
                 />
@@ -308,68 +313,6 @@ function WritePage() {
         </motion.p>
       </motion.div>
     </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────
-   재사용 입력 필드 컴포넌트
-   ─────────────────────────────────────────────────────
-   보내는 사람 / 받는 사람 입력에 공통으로 사용됩니다.
-
-   스타일 설명:
-   - px-4 py-3        : 내부 패딩 (좌우 16px, 위아래 12px)
-   - rounded-xl       : 모서리 둥글기
-   - bg-bg-warm/50    : 따뜻한 크림색 배경 (50% 투명도)
-   - border-border-soft: 연한 테두리 (에러 없을 때)
-   - border-error/50  : 빨간 테두리 (에러 있을 때, 50% 투명도)
-   ───────────────────────────────────────────────────── */
-function FormField({ id, label, name, placeholder, value, error, maxLength, onChange, onBlur }) {
-  return (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-text-main mb-1.5">
-        {label}
-      </label>
-      <input
-        id={id}
-        type="text"
-        name={name}
-        placeholder={placeholder}
-        value={value}
-        maxLength={maxLength}
-        onChange={onChange}
-        onBlur={onBlur}
-        className={`
-          w-full px-4 py-3 rounded-xl border text-sm
-          bg-bg-warm/50 text-text-main placeholder-text-light
-          transition-all duration-200
-          focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50
-          ${error ? 'border-error/50 ring-1 ring-error/20' : 'border-border-soft'}
-        `}
-      />
-      {/* 에러 메시지 (에러 있을 때만 표시) */}
-      {error && <p className="text-xs text-error mt-1">{error}</p>}
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────
-   로딩 스피너 컴포넌트
-   ─────────────────────────────────────────────────────
-   버튼 클릭 후 Firebase 저장 중일 때 버튼 안에 표시됩니다.
-   animate-spin : Tailwind 기본 회전 애니메이션
-   ───────────────────────────────────────────────────── */
-function LoadingSpinner() {
-  return (
-    <svg
-      className="animate-spin h-5 w-5 text-white"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-    </svg>
   );
 }
 

@@ -1,28 +1,10 @@
 /**
  * sanitize.js - 입력값 정화 모듈 (SRP)
  *
- * XSS(Cross-Site Scripting) 공격을 방지하기 위해
- * 사용자 입력에서 위험한 HTML 태그/스크립트를 제거합니다.
+ * 사용자 입력의 공백 정리 및 기본 정화를 담당합니다.
+ * React는 JSX 렌더링 시 자동으로 HTML을 이스케이프하므로,
+ * 별도의 escapeHtml 처리는 불필요합니다.
  */
-
-/** HTML 특수문자를 이스케이프 처리 */
-const HTML_ESCAPE_MAP = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#x27;',
-};
-
-/**
- * HTML 특수문자를 이스케이프하여 XSS 방지
- * @param {string} str - 정화할 문자열
- * @returns {string} 이스케이프된 안전한 문자열
- */
-export function escapeHtml(str) {
-  if (typeof str !== 'string') return '';
-  return str.replace(/[&<>"']/g, (char) => HTML_ESCAPE_MAP[char]);
-}
 
 /**
  * 문자열 앞뒤 공백 제거 + 연속 공백 정리
@@ -41,8 +23,7 @@ export function normalizeWhitespace(str) {
  */
 export function sanitizeContent(str) {
   if (typeof str !== 'string') return '';
-  // 줄바꿈을 임시 토큰으로 치환 → 이스케이프 → 복원
-  return escapeHtml(str.trim());
+  return str.trim();
 }
 
 /**
